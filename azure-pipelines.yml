@@ -6,6 +6,8 @@ jobs:
   pool: Default
 
   steps:
+  - bash: apt-get install git
+    displayName: Update git
   - bash: |
       git --version
       URL=$(Build.Repository.Uri)
