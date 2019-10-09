@@ -7,6 +7,7 @@ jobs:
 
   steps:
   - bash: |
+      git --version
       URL=$(Build.Repository.Uri)
       REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
       LABEL=$(curl https://api.github.com/repos/$REPO/pulls\?state\=all | tr ',' '\n' | grep name | head -1 | cut -d ":" -f 2 | tr -d '"')
