@@ -1,10 +1,11 @@
-parameters:
-  name: 'Versioning'
-  buildConfiguration: 'Release'
-  pool: Default
-  CASCADES: ''
+trigger:
+- master
 
-steps:
+jobs:
+- job: 'Test_Versioning'
+  pool: Default
+
+  steps:
   - bash: |
       URL=$(Build.Repository.Uri)
       REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
