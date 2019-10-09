@@ -10,9 +10,12 @@ jobs:
   - bash: |
       URL=$(Build.Repository.Uri)
       REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
-      BRANCH_NAME=$(Build.SourceBranch)
+      BRANCH=$(Build.SourceBranch)
       echo "Branch:"
-      echo $BRANCH_NAME
+      echo $BRANCH
+      ID=$(echo $BRANCH | cut -d "/" -f 3)
+      echo "Id:"
+      echo $ID
       PULL_REQUEST_JSON=$(curl https://api.github.com/repos/$REPO/pulls\?state\=all | jq '.[] | select((.state=="open") and (.head.ref=="'$BRANCH_NAME'"))')
       echo "Printing Pull request JSON"
       echo $PULL_REQUEST_JSON
