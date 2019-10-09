@@ -11,7 +11,7 @@ jobs:
       URL=$(Build.Repository.Uri)
       REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
       BRANCH_NAME=$(Build.SourceBranchName)
-      PULL_REQUEST_JSON=$(curl https://api.github.com/repos/woksin/TestVersioning/pulls\?state\=all | jq '.[] | select((.state=="open") and (.head.ref=="'$BRANCH_NAME'"))')
+      PULL_REQUEST_JSON=$(curl https://api.github.com/repos/$REPO/pulls\?state\=all | jq '.[] | select((.state=="open") and (.head.ref=="'$BRANCH_NAME'"))')
       echo "Printing Pull request JSON"
       echo $PULL_REQUEST_JSON
       LABELS=$(echo $PULL_REQUEST_JSON | jq '.labels | .[] | .name' -r )
