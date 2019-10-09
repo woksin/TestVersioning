@@ -1,12 +1,57 @@
-trigger:
-- master
+parameters:
+  name: 'Versioning'
+  buildConfiguration: 'Release'
+  pool: Default
+  CASCADES: ''
 
-resources:
-  repositories:
-    - repository: templates
-      type: github
-      name: dolittle-tools/AzureDevOps
-      endpoint: dolittle-tools
+steps:
+  - bash: |
+      URL=$(Build.Repository.Uri)
+      REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
+      LABEL=$(curl https://api.github.com/repos/$REPO/pulls\?state\=all | tr ',' '\n' | grep name | head -1 | cut -d ":" -f 2 | tr -d '"')
+      VERSION=$(git -c 'versionsort.suffix=-' ls-remote -t --exit-code --refs --sort=-v:refname | sed -E 's/^[[:xdigit:]]+[[:space:]]+refs\/tags\/(.+)/\1/g' | grep -E '^\d+\.\d+\.\d+$' | head -1)
+      if [ ! "$VERSION" ] ; then
+      VERSION=1.0.0
+      echo "No version tag found. Setting version to $VERSION"
+      fi
+      MAJOR=`echo $VERSION | awk -F "." '{print $1}'`
+      MINOR=`echo $VERSION | awk -F "." '{print $2}'`
+      PATCH=`echo $VERSION | awk -F "." '{print $3}'`
+      STATUS=$(curl https://api.github.com/repos/$REPO/pulls\?state\=all | tr ',' '\n' | grep merged_at | head -1 | cut -d ":" -f 2 | tr -d '"')
+      echo $LABEL
+      if [ "$STATUS" != "null" ]
+      then
+          SHOULD_TAG=true
+          if [ "$LABEL" = "major" ]
+          then
+              echo "New major release"
+              MAJOR=$((MAJOR+1))
+              MINOR="0"
+              PATCH="0"
 
-jobs:
-- template: Source/TypeScript/framework.yml@templates
+          elif [ "$LABEL" = "minor" ]
+          then
+              echo "New minor release"
+              MINOR=$((MINOR+1))
+              PATCH="0"
+          elif [ "$LABEL" = "patch" ]
+          then
+              echo "New patch release"
+              PATCH=$((PATCH+1))
+          else
+              echo "Should not trigger a new release version"
+              SHOULD_TAG=false
+          fi
+
+          if [ "$SHOULD_TAG" = true ] ; then
+              git tag -a "$MAJOR"."$MINOR"."$PATCH" -m ""
+              echo "Previous version $VERSION"
+              echo "New version : $MAJOR.$MINOR.$PATCH"
+              git push --tags
+          fi
+      else
+          echo "Pull request not merged yet"
+      fi
+  ##to be continued
+    displayName: Update Version tag
+    
