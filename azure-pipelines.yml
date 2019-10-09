@@ -11,7 +11,7 @@ jobs:
       apt-get install jq -y
       URL=$(Build.Repository.Uri)
       REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
-      BRANCH_NAME=$(Build.SourceBranchName}
+      BRANCH_NAME=$(Build.SourceBranchName)
       PULL_REQUEST_JSON=$(curl https://api.github.com/repos/woksin/TestVersioning/pulls\?state\=all | jq '.[] | select((.state=="open") and (.head.ref=="'$BRANCH_NAME'"))')
       LABELS=$(echo $PULL_REQUEST_JSON | jq '.labels | .[] | .name' -r )
       echo "Got labels:"
