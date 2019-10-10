@@ -99,29 +99,32 @@ jobs:
   - script: npm i yarn -g
     displayName: Installing yarn
 
-  - bash: | 
-      if [ ! "$Version" = "empty" ]
+  - bash: |
+      echo "$(Version)"
+      if [ ! "$(Version)" = "empty" ]
       then
           URL=$(Build.Repository.Uri)
           BRANCH=$(Build.SourceBranch) 
           REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
           BRANCH=$(echo $BRANCH | cut -d "/" -f 3)
 
-          echo Triggering new release of version "$Version"
+          echo Triggering new release of version "$(Version)"
           echo //registry.npmjs.org/:_authToken="$NPM_TOKEN" > .npmrc
           WORKSPACES=$(jq '.workspaces' package.json)
           if [ "$WORKSPACES" = null ]
           then
               echo "Releasing single package"
-              JSON=$(jq -r '.version = \"$Version\"' package.json)
+              JSON=$(jq -r '.version = $(Version)' package.json)
               echo "$JSON" > package.json
+              git add package.json
           else
               echo "Releasing multiple packages"
               PACKAGES=$(find Source/*/package.json)
               echo "$PACKAGES" | while read -r package
               do
-                  JSON=$(jq -r '.version = \"$Version\"' "$package")
+                  JSON=$(jq -r '.version = $(Version)' "$package")
                   echo "$JSON" > "$package"
+                  git add "$package"
               done
           fi
 
