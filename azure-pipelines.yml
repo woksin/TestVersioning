@@ -9,6 +9,7 @@ jobs:
   steps:
   - bash: |
       URL=$(Build.Repository.Uri)
+      echo $URL
       #refs/heads/master when direct commit to master and when merging a pull request to master. When pull request it's the issue number
       COMMIT_SHA=$(Build.SourceVersion)
       BRANCH=$(Build.SourceBranch) 
