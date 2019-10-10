@@ -112,6 +112,9 @@ jobs:
           git config user.email \"$GIT_EMAIL\"
 
           echo Triggering new release of version "$(Version)"
+          VERSION=\""$(Version)"\"
+          echo "Version with quotes:"
+          echo "$VERSION"
           echo //registry.npmjs.org/:_authToken="$NPM_TOKEN" > .npmrc
           WORKSPACES=$(jq '.workspaces' package.json)
           if [ "$WORKSPACES" = null ]
