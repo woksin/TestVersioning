@@ -101,46 +101,49 @@ jobs:
 
   - bash: |
       echo "$(Version)"
-      if [ "$(Version)" != "empty" ]
-      then
-          URL=$(Build.Repository.Uri)
-          BRANCH=$(Build.SourceBranch) 
-          REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
-          BRANCH=$(echo $BRANCH | cut -d "/" -f 3)
+      VERSION=\""$(Version)"\"
+      echo "Version with quotes:"
+      echo "$VERSION"
+    #   if [ "$(Version)" != "empty" ]
+    #   then
+    #       URL=$(Build.Repository.Uri)
+    #       BRANCH=$(Build.SourceBranch) 
+    #       REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
+    #       BRANCH=$(echo $BRANCH | cut -d "/" -f 3)
           
-          git config user.name \"$GIT_USERNAME\"
-          git config user.email \"$GIT_EMAIL\"
+    #       git config user.name \"$GIT_USERNAME\"
+    #       git config user.email \"$GIT_EMAIL\"
 
-          echo Triggering new release of version "$(Version)"
-          VERSION=\""$(Version)"\"
-          echo "Version with quotes:"
-          echo "$VERSION"
-          echo //registry.npmjs.org/:_authToken="$NPM_TOKEN" > .npmrc
-          WORKSPACES=$(jq '.workspaces' package.json)
-          if [ "$WORKSPACES" = null ]
-          then
-              echo "Releasing single package"
-              JSON=$(jq -r '.version = $(Version)' package.json)
-              echo "$JSON" > package.json
-              git add package.json
-          else
-              echo "Releasing multiple packages"
-              PACKAGES=$(find Source/*/package.json)
-              echo "$PACKAGES" | while read -r package
-              do
-                  JSON=$(jq -r '.version = $(Version)' "$package")
-                  echo "$JSON" > "$package"
-                  git add "$package"
-              done
-          fi
+    #       echo Triggering new release of version "$(Version)"
+    #       VERSION=\""$(Version)"\"
+    #       echo "Version with quotes:"
+    #       echo "$VERSION"
+    #       echo //registry.npmjs.org/:_authToken="$NPM_TOKEN" > .npmrc
+    #       WORKSPACES=$(jq '.workspaces' package.json)
+    #       if [ "$WORKSPACES" = null ]
+    #       then
+    #           echo "Releasing single package"
+    #           JSON=$(jq -r '.version = $(Version)' package.json)
+    #           echo "$JSON" > package.json
+    #           git add package.json
+    #       else
+    #           echo "Releasing multiple packages"
+    #           PACKAGES=$(find Source/*/package.json)
+    #           echo "$PACKAGES" | while read -r package
+    #           do
+    #               JSON=$(jq -r '.version = $(Version)' "$package")
+    #               echo "$JSON" > "$package"
+    #               git add "$package"
+    #           done
+    #       fi
 
-          git commit -m "Increment version"
-          git push https://$GIT_USERNAME:$PAT@github.com/$REPO HEAD:$BRANCH
-          yarn pipeline:publish
+    #       git commit -m "Increment version"
+    #       git push https://$GIT_USERNAME:$PAT@github.com/$REPO HEAD:$BRANCH
+    #       yarn pipeline:publish
         
-      else
-          echo "No new version to release"
-      fi
+    #   else
+    #       echo "No new version to release"
+    #   fi
     displayName: Handling release
     env:
         NPM_TOKEN: $(NpmToken)
