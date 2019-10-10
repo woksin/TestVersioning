@@ -12,7 +12,6 @@ jobs:
   steps:
   - bash: |
       URL=$(Build.Repository.Uri)
-      echo $URL
 
       EMAIL=$(GitEmail)
       USER_NAME=$(GitUsername)
