@@ -11,18 +11,14 @@ jobs:
 
   steps:
   - bash: |
-      grep --version
       URL=$(Build.Repository.Uri)
       COMMIT_SHA=$(Build.SourceVersion)
       BRANCH=$(Build.SourceBranch) 
       REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
-      ID=$(echo $BRANCH | cut -d "/" -f 3)
-      # If it's master it might be a merged PR
-      if [ "$ID" = "master" ]
+      BRANCH=$(echo $BRANCH | cut -d "/" -f 3)
+      if [ "$BRANCH" = "master" ]
       then
-          #This may crash? Gets closed PR with merge sha id
           MERGED_PR_JSON=$(curl https://api.github.com/repos/$REPO/pulls\?state\=all | jq '.[] | select(.merge_commit_sha=="'$COMMIT_SHA'")')
-          # Get labels
           LABELS=$(echo $MERGED_PR_JSON | jq '.labels | .[] | .name' -r )
           MAJOR_LABEL=$(echo $LABELS | grep -E '^major$')
           MINOR_LABEL=$(echo $LABELS | grep -E '^minor$')
@@ -30,27 +26,12 @@ jobs:
           echo "Got labels:"
           echo $LABELS
           echo "Getting version tag"
-          #VERSION=$(git -c 'versionsort.suffix=-' ls-remote -t --refs --sort=-v:refname | sed -E "s/.+refs\/tags\/(.+)/\1/g" | grep -E '^\d+\.\d+\.\d+$' | head -1)
-          
           TAG_REFS=$(git -c 'versionsort.suffix=-' ls-remote -t --refs --sort=-v:refname)
           while [ ! "$TAG_REFS" ]
           do
               sleep 1
           done
-          echo First
-          echo $TAG_REFS
-          #VERSION=$TAG_REFS | grep -o -E "refs/tags/\S+" | grep -o -E '^\d+\.\d+\.\d+$' | head -1
-          VERSION=$(echo $TAG_REFS | grep -o -E "refs/tags/\S+" | grep -o -e "[0-9]\+\.[0-9]\+\.[0-9]\+" | head -1)
-        #   echo Second
-        #   SOMETHING=$(echo $TAG_REFS | grep -o -E "refs/tags/\S+")
-        #   echo $SOMETHING
-        #   echo Third
-        #   SOMETHING_ELSE=$(echo $SOMETHING | grep -o -e "[0-9]\+\.[0-9]\+\.[0-9]\+")
-        #   echo $SOMETHING_ELSE
-        #   echo Fourth
-        #   echo $TAG_REFS | grep -o -E "refs/tags/\S+" | grep -o -e "[0-9]\+\.[0-9]\+\.[0-9]\+" | head -1
-          echo "Got version:"
-          echo $VERSION
+          VERSION=$(echo $TAG_REFS | grep -o -E "refs/tags/\S+" | grep -o -e "[0-9]\+\.[0-9]\+\.[0-9]\+" | head -1) # About 2 hours spent here, grep on my machine and this did not behave the same given the same input...
           NEW_PROJECT=false
           if [ ! "$VERSION" ]
           then
@@ -93,7 +74,7 @@ jobs:
               git tag -a "$MAJOR"."$MINOR"."$PATCH" -m "Azure Devops Pipelines Versioning Strategy: Tagging new version"
               echo "Previous version $VERSION"
               echo "New version : $MAJOR.$MINOR.$PATCH"
-              git push https://$GIT_USERNAME:$PAT@github.com/$REPO HEAD:$ID --tags
+              git push https://$GIT_USERNAME:$PAT@github.com/$REPO HEAD:$BRANCH --tags
           else
               echo "No label triggering new version"
           fi
