@@ -16,12 +16,6 @@ jobs:
       BRANCH=$(Build.SourceBranch) 
       EMAIL=$GIT_EMAIL
       USER_NAME=$GIT_USERNAME
-      echo $EMAIL
-      echo $USER_NAME
-      EMAIL=\"$EMAIL\"
-      USER_NAME=\"$USER_NAME\"
-      echo $EMAIL
-      echo $USER_NAME
       AUTH="\"Authorization: Basic $PAT\""
       echo $AUTH
       REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
@@ -79,9 +73,9 @@ jobs:
           if [ "$SHOULD_TAG" = true ]
           then
               echo "Triggering new version tag"
-              git config --global http.$URL.extraHeader "$AUTH"
-              git config --global user.email "$EMAIL"
-              git config --global user.name "$USER_NAME"
+              git config http.$URL.extraHeader "$AUTH"
+              git config user.email \"$EMAIL\"
+              git config user.name \"$USER_NAME\"
 
               git tag -a "$MAJOR"."$MINOR"."$PATCH" -m "Azure Devops Pipelines Versioning Strategy: Tag new version"
               echo "Previous version $VERSION"
