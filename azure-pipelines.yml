@@ -44,10 +44,10 @@ jobs:
           SOMETHING=$(echo $TAG_REFS | grep -o -E "refs/tags/\S+")
           echo $SOMETHING
           echo Third
-          SOMETHING_ELSE=$(echo $SOMETHING | grep -o -E '\d+\.\d+\.\d+')
+          SOMETHING_ELSE=$(echo $SOMETHING | grep -o -e "[0-9]\+\.[0-9]\+\.[0-9]\+")
           echo $SOMETHING_ELSE
           echo Fourth
-          echo $TAG_REFS | grep -o -E "refs/tags/\S+" | grep -o -E '\d+\.\d+\.\d+' | head -1
+          echo $TAG_REFS | grep -o -E "refs/tags/\S+" | grep -o -e "[0-9]\+\.[0-9]\+\.[0-9]\+" | head -1
           echo "Got version:"
           echo $VERSION
           NEW_PROJECT=false
