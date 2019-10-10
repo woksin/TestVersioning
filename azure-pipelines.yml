@@ -12,19 +12,15 @@ jobs:
   steps:
   - bash: |
       URL=$(Build.Repository.Uri)
-      git show-ref
       COMMIT_SHA=$(Build.SourceVersion)
       BRANCH=$(Build.SourceBranch) 
       REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
       ID=$(echo $BRANCH | cut -d "/" -f 3)
-      echo $ID
       # If it's master it might be a merged PR
       if [ "$ID" = "master" ]
       then
           #This may crash? Gets closed PR with merge sha id
           MERGED_PR_JSON=$(curl https://api.github.com/repos/$REPO/pulls\?state\=all | jq '.[] | select(.merge_commit_sha=="'$COMMIT_SHA'")')
-          echo "Merged Pr Json:"
-          echo $MERGED_PR_JSON
           # Get labels
           LABELS=$(echo $MERGED_PR_JSON | jq '.labels | .[] | .name' -r )
           MAJOR_LABEL=$(echo $LABELS | grep -E '^major$')
