@@ -41,6 +41,8 @@ jobs:
           done
           echo $TAG_REFS
           #VERSION=$TAG_REFS | grep -o -E "refs/tags/\S+" | grep -o -E '^\d+\.\d+\.\d+$' | head -1
+          echo $TAG_REFS | grep -o -E "refs/tags/\S+"
+          echo $TAG_REFS | grep -o -E "refs/tags/\S+" | grep -o -E '^\d+\.\d+\.\d+$'
           echo $TAG_REFS | grep -o -E "refs/tags/\S+" | grep -o -E '^\d+\.\d+\.\d+$' | head -1
           echo "Got version:"
           echo $VERSION
