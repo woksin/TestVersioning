@@ -40,7 +40,7 @@ jobs:
           echo First
           echo $TAG_REFS
           #VERSION=$TAG_REFS | grep -o -E "refs/tags/\S+" | grep -o -E '^\d+\.\d+\.\d+$' | head -1
-          VERSION=$(echo $TAG_REFS | | grep -o -E "refs/tags/\S+" | grep -o -e "[0-9]\+\.[0-9]\+\.[0-9]\+" | head -1)
+          VERSION=$(echo $TAG_REFS | grep -o -E "refs/tags/\S+" | grep -o -e "[0-9]\+\.[0-9]\+\.[0-9]\+" | head -1)
         #   echo Second
         #   SOMETHING=$(echo $TAG_REFS | grep -o -E "refs/tags/\S+")
         #   echo $SOMETHING
