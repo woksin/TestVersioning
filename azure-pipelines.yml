@@ -78,10 +78,9 @@ jobs:
           else
               echo "No label triggering new version"
           fi
-      else
-          echo "Not a merging. No need to create new version"
-      
       fi
+      echo "End of script"
+      
       
       
     displayName: Handle versioning tag
