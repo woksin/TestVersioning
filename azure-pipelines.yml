@@ -11,6 +11,7 @@ jobs:
 
   steps:
   - bash: |
+      which sed
       URL=$(Build.Repository.Uri)
       COMMIT_SHA=$(Build.SourceVersion)
       BRANCH=$(Build.SourceBranch) 
