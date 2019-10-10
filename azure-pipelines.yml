@@ -12,8 +12,8 @@ jobs:
   steps:
   - bash: |
       URL=$(Build.Repository.Uri)
-      COMMIT_SHA=$(Build.SourceVersion)
       BRANCH=$(Build.SourceBranch) 
+      COMMIT_SHA=$(Build.SourceVersion)
       REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
       BRANCH=$(echo $BRANCH | cut -d "/" -f 3)
       if [ "$BRANCH" = "master" ]
@@ -68,6 +68,7 @@ jobs:
           fi
           if [ "$SHOULD_TAG" = true ]
           then
+              echo "##vso[task.setvariable variable=Version]$VERSION"
               echo "Triggering new version tag"
               git config user.name \"$GIT_USERNAME\"
               git config user.email \"$GIT_EMAIL\"
@@ -76,14 +77,67 @@ jobs:
               echo "New version : $MAJOR.$MINOR.$PATCH"
               git push https://$GIT_USERNAME:$PAT@github.com/$REPO HEAD:$BRANCH --tags
           else
+              echo "##vso[task.setvariable variable=Version]empty"
               echo "No label triggering new version"
           fi
+      else
+           echo "##vso[task.setvariable variable=Version]empty"
       fi
-      echo "End of script"
 
-    displayName: Handle versioning tag
+    displayName: Handle version tag
+    name: VersionHandling
     env:
       GIT_EMAIL: $(GitEmail)
       GIT_USERNAME: $(GitUsername)
       PAT: $(CascadingBuild)
-    
+  
+  - task: NodeTool@0
+    displayName: Ensuring node version
+    inputs:
+      versionSpec: '>=12.0.0'
+  
+  - script: npm i yarn -g
+    displayName: Installing yarn
+
+  - bash: | 
+      if [ ! "$Version" = "empty" ]
+      then
+          URL=$(Build.Repository.Uri)
+          BRANCH=$(Build.SourceBranch) 
+          REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
+          BRANCH=$(echo $BRANCH | cut -d "/" -f 3)
+
+          echo Triggering new release of version "$Version"
+          echo //registry.npmjs.org/:_authToken="$NPM_TOKEN" > .npmrc
+          WORKSPACES=$(jq '.workspaces' package.json)
+          if [ "$WORKSPACES" = null ]
+          then
+              echo "Releasing single package"
+              JSON=$(jq -r '.version = \"$Version\"' package.json)
+              echo "$JSON" > package.json
+          else
+              echo "Releasing multiple packages"
+              PACKAGES=$(find Source/*/package.json)
+              echo "$PACKAGES" | while read -r package
+              do
+                  JSON=$(jq -r '.version = \"$Version\"' "$package")
+                  echo "$JSON" > "$package"
+              done
+          fi
+
+          git config user.name \"$GIT_USERNAME\"
+          git config user.email \"$GIT_EMAIL\"
+          git add -A
+          git commit -m "Increment version"
+          git push https://$GIT_USERNAME:$PAT@github.com/$REPO HEAD:$BRANCH
+          yarn pipeline:publish
+        
+      else
+          echo "No new version to release"
+      fi
+    displayName: Handling release
+    env:
+        NPM_TOKEN: $(NpmToken)
+        GIT_USERNAME: $(GitUsername)
+        GIT_EMAIL: $(GitEmail)
+        PAT: $(CascadingBuild)
