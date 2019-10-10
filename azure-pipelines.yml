@@ -72,6 +72,9 @@ jobs:
           then
               echo "Triggering new version tag"
               git config --global http.$REPO_URL.extraHeader "Authorization: Basic $CascadingBuild"
+              git config --global user.email "SomeEmail@email.com"
+              git config --global user.name "$Azure Pipeline"
+
               git tag -a "$MAJOR"."$MINOR"."$PATCH" -m "Azure Devops Pipelines Versioning Strategy: Tag new version"
               echo "Previous version $VERSION"
               echo "New version : $MAJOR.$MINOR.$PATCH"
