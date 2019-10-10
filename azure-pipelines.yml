@@ -113,7 +113,12 @@ jobs:
           git config user.email \"$GIT_EMAIL\"
 
           echo Triggering new release of version "$(Version)"
-          echo //registry.npmjs.org/:_authToken=$NPM_TOKEN > ~/.npmrc
+          echo "//registry.npmjs.org/:_authToken=\${NPMTOKEN}" > .npmrc
+          echo "//registry.npmjs.org/:_authToken=\${NPMTOKEN}" > ~/.npmrc
+          cat ./.npmrc
+          cat ./.yarnrc
+          cat ~/.yarn
+          
           WORKSPACES=$(jq '.workspaces' package.json)
           if [ "$WORKSPACES" = null ]
           then
@@ -134,6 +139,9 @@ jobs:
 
           git commit -m "Increment version"
           git push https://$GIT_USERNAME:$PAT@github.com/$REPO HEAD:$BRANCH
+
+           yarn config delete registry
+           yarn --global config delete registry
           yarn pipeline:publish
         
       else
