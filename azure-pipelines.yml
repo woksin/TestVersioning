@@ -1,6 +1,9 @@
 trigger:
 - master
 
+variables:
+- group: global-var-pipelines
+
 jobs:
 - job: 'Test_Versioning'
   pool:
