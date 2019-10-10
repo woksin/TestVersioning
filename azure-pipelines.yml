@@ -33,6 +33,13 @@ jobs:
           echo $LABELS
           echo "Getting version tag"
           VERSION=$(git -c 'versionsort.suffix=-' ls-remote -t --exit-code --refs --sort=-v:refname | sed -E "s/.+refs\/tags\/(.+)/\1/g" | grep -E '^\d+\.\d+\.\d+$' | head -1)
+          git -c 'versionsort.suffix=-' ls-remote -t --exit-code --refs --sort=-v:refname
+          git -c 'versionsort.suffix=-' ls-remote -t --exit-code --refs --sort=-v:refname
+          git -c 'versionsort.suffix=-' ls-remote -t --exit-code --refs --sort=-v:refname
+          git -c 'versionsort.suffix=-' ls-remote -t --exit-code --refs --sort=-v:refname
+          git -c 'versionsort.suffix=-' ls-remote -t --exit-code --refs --sort=-v:refname | sed -E "s/.+refs\/tags\/(.+)/\1/g" | grep -E '^\d+\.\d+\.\d+$' | head -1
+          git -c 'versionsort.suffix=-' ls-remote -t --exit-code --refs --sort=-v:refname | sed -E "s/.+refs\/tags\/(.+)/\1/g" | grep -E '^\d+\.\d+\.\d+$' | head -1
+          git -c 'versionsort.suffix=-' ls-remote -t --exit-code --refs --sort=-v:refname | sed -E "s/.+refs\/tags\/(.+)/\1/g" | grep -E '^\d+\.\d+\.\d+$' | head -1
           git -c 'versionsort.suffix=-' ls-remote -t --exit-code --refs --sort=-v:refname | sed -E "s/.+refs\/tags\/(.+)/\1/g" | grep -E '^\d+\.\d+\.\d+$' | head -1
         #   RAW=$(git -c 'versionsort.suffix=-' ls-remote -t --exit-code --refs --sort=-v:refname)
         #   git -c 'versionsort.suffix=-' ls-remote -t --exit-code --refs --sort=-v:refname
