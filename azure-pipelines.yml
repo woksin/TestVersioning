@@ -72,9 +72,9 @@ jobs:
           if [ "$SHOULD_TAG" = true ]
           then
               echo "Triggering new version tag"
-              git config --global http.$REPO_URL.extraHeader "Authorization: Basic $CascadingBuild"
-              git config --global user.email "$GitEmail"
-              git config --global user.name "$GitUsername"
+              git config --global http.$URL.extraHeader "Authorization: Basic $CascadingBuild"
+              git config --global user.email "\"$GitEmail\""
+              git config --global user.name "\"$GitUsername\""
 
               git tag -a "$MAJOR"."$MINOR"."$PATCH" -m "Azure Devops Pipelines Versioning Strategy: Tag new version"
               echo "Previous version $VERSION"
