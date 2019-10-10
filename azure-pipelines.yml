@@ -63,7 +63,7 @@ jobs:
               echo "New minor release"
               MINOR=$((MINOR+1))
               PATCH="0"
-          elif [ "$PATCH_LABEL" = "patch" ] [ "$NEW_PROJECT" = false ]
+          elif [ "$PATCH_LABEL" = "patch" ] && [ "$NEW_PROJECT" = false ]
           then
               echo "New patch release"
               PATCH=$((PATCH+1))
