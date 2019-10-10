@@ -113,11 +113,7 @@ jobs:
           git config user.email \"$GIT_EMAIL\"
 
           echo Triggering new release of version "$(Version)"
-          echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
-          echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > ~/.npmrc
-          cat ./.npmrc
-          cat ./.yarnrc
-          cat ~/.yarnrc
+          
           
           WORKSPACES=$(jq '.workspaces' package.json)
           if [ "$WORKSPACES" = null ]
@@ -139,10 +135,14 @@ jobs:
 
           git commit -m "Increment version"
           git push https://$GIT_USERNAME:$PAT@github.com/$REPO HEAD:$BRANCH
+          
 
-          yarn config delete registry
-          yarn --global config delete registry
-          yarn pipeline:publish
+          echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
+          echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > ~/.npmrc
+          echo --registry "https://registry.npmjs.com" >> .yarnrc
+          echo --registry "https://registry.npmjs.com" >> ~/.yarnrc
+          yarn config set _authToken $NPM_TOKEN
+          yarn pipeline:publish --registry https://registry.npmjs.com
         
       else
           echo "No new version to release"
