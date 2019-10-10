@@ -34,14 +34,13 @@ jobs:
           echo "Getting version tag"
           #VERSION=$(git -c 'versionsort.suffix=-' ls-remote -t --refs --sort=-v:refname | sed -E "s/.+refs\/tags\/(.+)/\1/g" | grep -E '^\d+\.\d+\.\d+$' | head -1)
           
-        #  git -c 'versionsort.suffix=-' ls-remote -t --exit-code --refs --sort=-v:refname | sed -E "s/.+refs\/tags\/(.+)/\1/g" | grep -E '^\d+\.\d+\.\d+$' | head -1
           TAG_REFS=$(git -c 'versionsort.suffix=-' ls-remote -t --refs --sort=-v:refname)
           while [ ! "$TAG_REFS" ]
           do
               sleep 1
           done
           echo $TAG_REFS
-          VERSION=$TAG_REFS | sed -E "s/.+refs\/tags\/(.+)/\1/g" | grep -E '^\d+\.\d+\.\d+$' | head -1 
+          VERSION=$TAG_REFS | grep -o -E "refs/tags/\S+" | grep -o -E '^\d+\.\d+\.\d+$' | head -1
           echo "Got version:"
           echo $VERSION
           NEW_PROJECT=false
