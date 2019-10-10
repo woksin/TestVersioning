@@ -19,12 +19,12 @@ jobs:
       if [ "$BRANCH" = "master" ]
       then
           MERGED_PR_JSON=$(curl https://api.github.com/repos/$REPO/pulls\?state\=all | jq '.[] | select(.merge_commit_sha=="'$COMMIT_SHA'")')
-          LABELS=$(echo $MERGED_PR_JSON | jq '.labels | .[] | .name' -r )
-          MAJOR_LABEL=$(echo $LABELS | grep -E '^major$')
-          MINOR_LABEL=$(echo $LABELS | grep -E '^minor$')
-          PATCH_LABEL=$(echo $LABELS | grep -E '^patch$')
+          LABELS=$(echo $MERGED_PR_JSON | jq '.labels | .[] | .name' -r)
+          MAJOR_LABEL=$(echo "$LABELS" | grep -E '^major$')
+          MINOR_LABEL=$(echo "$LABELS" | grep -E '^minor$')
+          PATCH_LABEL=$(echo "$LABELS" | grep -E '^patch$')
           echo "Got labels:"
-          echo $LABELS
+          echo "$LABELS"
           echo "Getting version tag"
           TAG_REFS=$(git -c 'versionsort.suffix=-' ls-remote -t --refs --sort=-v:refname)
           while [ ! "$TAG_REFS" ]
