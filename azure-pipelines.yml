@@ -12,6 +12,8 @@ jobs:
   steps:
   - bash: |
       which sed
+      which grep
+      which head
       URL=$(Build.Repository.Uri)
       COMMIT_SHA=$(Build.SourceVersion)
       BRANCH=$(Build.SourceBranch) 
@@ -32,6 +34,7 @@ jobs:
           echo "Getting version tag"
           VERSION=$(git -c 'versionsort.suffix=-' ls-remote -t --exit-code --refs --sort=-v:refname | sed -E 's/.+refs\/tags\/(.+)/\1/g' | grep -E '^\d+\.\d+\.\d+$' | head -1)
           RAW=$(git -c 'versionsort.suffix=-' ls-remote -t --exit-code --refs --sort=-v:refname)
+          git -c 'versionsort.suffix=-' ls-remote -t --exit-code --refs --sort=-v:refname
           echo $RAW
           $RAW | sed -E 's/.+refs\/tags\/(.+)/\1/g'
           $RAW | sed -E 's/.+refs\/tags\/(.+)/\1/g' | grep -E '^\d+\.\d+\.\d+$'
