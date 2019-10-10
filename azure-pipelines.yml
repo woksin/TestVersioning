@@ -19,10 +19,10 @@ jobs:
       echo $EMAIL
       echo $USER_NAME
       EMAIL=\"$EMAIL\"
-      USER_NAME=\"USER_NAME\"
+      USER_NAME=\"$USER_NAME\"
       echo $EMAIL
       echo $USER_NAME
-      echo "http.$URL.extraHeader 'Authorization: Basic $CascadingBuild'"
+      echo "http.$URL.extraHeader \"Authorization: Basic $(CascadingBuild)\""
       #refs/heads/master when direct commit to master and when merging a pull request to master. When pull request it's the issue number
       COMMIT_SHA=$(Build.SourceVersion)
       BRANCH=$(Build.SourceBranch) 
