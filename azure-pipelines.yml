@@ -139,8 +139,6 @@ jobs:
 
           echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
           echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > ~/.npmrc
-          echo --registry "https://registry.npmjs.com" >> .yarnrc
-          echo --registry "https://registry.npmjs.com" >> ~/.yarnrc
           yarn config set _authToken $NPM_TOKEN
           yarn pipeline:publish --registry https://registry.npmjs.com
         
