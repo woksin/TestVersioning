@@ -69,6 +69,8 @@ jobs:
           if [ "$SHOULD_TAG" = true ]
           then
               echo "Triggering new version tag"
+              git config user.name \"$GIT_USERNAME\"
+              git config user.email \"$GIT_EMAIL\"
               git tag -a "$MAJOR"."$MINOR"."$PATCH" -m "Azure Devops Pipelines Versioning Strategy: Tagging new version"
               echo "Previous version $VERSION"
               echo "New version : $MAJOR.$MINOR.$PATCH"
