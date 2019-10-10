@@ -17,6 +17,7 @@ jobs:
       BRANCH=$(Build.SourceBranch) 
       REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
       ID=$(echo $BRANCH | cut -d "/" -f 3)
+      echo $ID
       # If it's master it might be a merged PR
       if [ "$ID" = "master" ]
       then
@@ -75,7 +76,7 @@ jobs:
               git tag -a "$MAJOR"."$MINOR"."$PATCH" -m "Azure Devops Pipelines Versioning Strategy: Tagging new version"
               echo "Previous version $VERSION"
               echo "New version : $MAJOR.$MINOR.$PATCH"
-              git push https://$GIT_USERNAME:$PAT@github.com/$REPO $ID --tags
+              git push https://$GIT_USERNAME:$PAT@github.com/$REPO HEAD:$ID --tags
           else
               echo "No label triggering new version"
           fi
