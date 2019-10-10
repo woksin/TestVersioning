@@ -22,7 +22,7 @@ jobs:
       USER_NAME=\"$USER_NAME\"
       echo $EMAIL
       echo $USER_NAME
-      AUTH="http.$URL.extraHeader \"Authorization: Basic $PAT\""
+      AUTH="\"Authorization: Basic $PAT\""
       echo $AUTH
       REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
       ID=$(echo $BRANCH | cut -d "/" -f 3)
@@ -79,7 +79,7 @@ jobs:
           if [ "$SHOULD_TAG" = true ]
           then
               echo "Triggering new version tag"
-              git config --global "$AUTH"
+              git config --global http.$URL.extraHeader "$AUTH"
               git config --global user.email "$EMAIL"
               git config --global user.name "$USER_NAME"
 
