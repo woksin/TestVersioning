@@ -12,16 +12,14 @@ jobs:
   steps:
   - bash: |
       URL=$(Build.Repository.Uri)
-
-      EMAIL=$(GitEmail)
-      USER_NAME=$(GitUsername)
-      EMAIL=\"$EMAIL\"
-      USER_NAME=\"$USER_NAME\"
-      AUTH="http.$URL.extraHeader \"Authorization: Basic $(CascadingBuild)\""
-      echo $AUTH
-      #refs/heads/master when direct commit to master and when merging a pull request to master. When pull request it's the issue number
       COMMIT_SHA=$(Build.SourceVersion)
       BRANCH=$(Build.SourceBranch) 
+      EMAIL=$env:GIT_EMAIL
+      USER_NAME=$env:GIT_USERNAME
+      EMAIL=\"$EMAIL\"
+      USER_NAME=\"$USER_NAME\"
+      AUTH="http.$URL.extraHeader \"Authorization: Basic $env:PAT\""
+      echo $AUTH
       REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
       ID=$(echo $BRANCH | cut -d "/" -f 3)
       # If it's master it might be a merged PR
@@ -91,7 +89,9 @@ jobs:
       fi
       echo "End of script"
 
-      
-      
     displayName: Handle versioning tag
+    env:
+      GIT_EMAIL: $(GitEmail)
+      GIT_USERNAME: $(GitUsername)
+      PAT: $(CascadingBuild)
     
