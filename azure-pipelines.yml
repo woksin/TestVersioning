@@ -14,11 +14,15 @@ jobs:
       URL=$(Build.Repository.Uri)
       COMMIT_SHA=$(Build.SourceVersion)
       BRANCH=$(Build.SourceBranch) 
-      EMAIL=$env:GIT_EMAIL
-      USER_NAME=$env:GIT_USERNAME
+      EMAIL="$env:GIT_EMAIL"
+      USER_NAME="$env:GIT_USERNAME"
+      echo $EMAIL
+      echo $USER_NAME
       EMAIL=\"$EMAIL\"
       USER_NAME=\"$USER_NAME\"
-      AUTH="http.$URL.extraHeader \"Authorization: Basic $env:PAT\""
+      echo $EMAIL
+      echo $USER_NAME
+      AUTH="http.$URL.extraHeader \"Authorization: Basic "$env:PAT"\""
       echo $AUTH
       REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
       ID=$(echo $BRANCH | cut -d "/" -f 3)
