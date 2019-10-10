@@ -12,6 +12,7 @@ jobs:
   steps:
   - bash: |
       URL=$(Build.Repository.Uri)
+      git show-ref
       COMMIT_SHA=$(Build.SourceVersion)
       BRANCH=$(Build.SourceBranch) 
       REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
