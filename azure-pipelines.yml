@@ -68,13 +68,14 @@ jobs:
           fi
           if [ "$SHOULD_TAG" = true ]
           then
-              echo "##vso[task.setvariable variable=Version]$VERSION"
+              NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+              echo "##vso[task.setvariable variable=Version]$NEW_VERSION"
               echo "Triggering new version tag"
               git config user.name \"$GIT_USERNAME\"
               git config user.email \"$GIT_EMAIL\"
-              git tag -a "$MAJOR"."$MINOR"."$PATCH" -m "Azure Devops Pipelines Versioning Strategy: Tagging new version"
-              echo "Previous version $VERSION"
-              echo "New version : $MAJOR.$MINOR.$PATCH"
+              git tag -a "$NEW_VERSION" -m "Azure Devops Pipelines Versioning Strategy: Tagging new version"
+              echo Previous version "$VERSION"
+              echo New version "$NEW_VERSION"
               git push https://$GIT_USERNAME:$PAT@github.com/$REPO HEAD:$BRANCH --tags
           else
               echo "##vso[task.setvariable variable=Version]empty"
@@ -101,7 +102,6 @@ jobs:
 
   - bash: |
       echo "$(Version)"
-      QUOTED_VERSION=\""$(Version)"\"
       if [ "$(Version)" != "empty" ]
       then
           URL=$(Build.Repository.Uri)
@@ -118,7 +118,7 @@ jobs:
           if [ "$WORKSPACES" = null ]
           then
               echo "Releasing single package"
-              JSON=$(jq -r '.version = $QUOTED_VERSION' package.json)
+              JSON=$(jq -r -e --arg ver $(Version) '.version = $ver' package.json)
               echo "$JSON" > package.json
               git add package.json
           else
@@ -126,7 +126,7 @@ jobs:
               PACKAGES=$(find Source/*/package.json)
               echo "$PACKAGES" | while read -r package
               do
-                  JSON=$(jq -r '.version = $QUOTED_VERSION' "$package")
+                  JSON=$(jq -r -e --arg ver $(Version) '.version = $ver' "$package")
                   echo "$JSON" > "$package"
                   git add "$package"
               done
