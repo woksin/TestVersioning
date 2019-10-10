@@ -41,12 +41,11 @@ jobs:
           echo $TAG_REFS
           #VERSION=$TAG_REFS | grep -o -E "refs/tags/\S+" | grep -o -E '^\d+\.\d+\.\d+$' | head -1
           echo Second
-          echo $TAG_REFS | grep -o -E "refs/tags/\S+"
           SOMETHING=$(echo $TAG_REFS | grep -o -E "refs/tags/\S+")
-          echo "Something:"
           echo $SOMETHING
           echo Third
-          echo $TAG_REFS | grep -o -E "refs/tags/\S+" | grep -o -E '\d+\.\d+\.\d+'
+          SOMETHING_ELSE=$(echo $SOMETHING | grep -o -E '\d+\.\d+\.\d+')
+          echo $SOMETHING_ELSE
           echo Fourth
           echo $TAG_REFS | grep -o -E "refs/tags/\S+" | grep -o -E '\d+\.\d+\.\d+' | head -1
           echo "Got version:"
