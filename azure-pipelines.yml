@@ -29,8 +29,7 @@ jobs:
           echo "Got labels:"
           echo $LABELS
           echo "Getting version tag"
-          VERSION=$(git -c 'versionsort.suffix=-' ls-remote -t --exit-code --refs --sort=-v:refname | sed -E 's/^[[:xdigit:]]+[[:space:]]+refs\/tags\/(.+)/\1/g' | grep -E '^\d+\.\d+\.\d+$' | head -1)
-          git ls-remote
+          VERSION=$(git -c 'versionsort.suffix=-' ls-remote -t --exit-code --refs --sort=-v:refname | sed -E 's/.+refs\/tags\/(.+)/\1/g' | grep -E '^\d+\.\d+\.\d+$' | head -1)
           echo "Got version:"
           echo $VERSION
           NEW_PROJECT=false
