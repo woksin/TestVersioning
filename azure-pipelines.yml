@@ -67,6 +67,7 @@ jobs:
           then
               echo "New patch release"
               PATCH=$((PATCH+1))
+          fi
           if [ "$SHOULD_TAG" = true ]
           then
               echo "Triggering new version tag"
@@ -80,7 +81,7 @@ jobs:
           fi
       fi
       echo "End of script"
-      
+
       
       
     displayName: Handle versioning tag
