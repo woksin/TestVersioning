@@ -12,12 +12,9 @@ jobs:
   steps:
   - bash: |
       URL=$(Build.Repository.Uri)
-      echo $URL
       COMMIT_SHA=$(Build.SourceVersion)
       BRANCH=$(Build.SourceBranch) 
-      echo $AUTH
       REPO=`echo "$URL" | awk -F ".com/" '{ print $2 }'`
-      echo $REPO
       ID=$(echo $BRANCH | cut -d "/" -f 3)
       # If it's master it might be a merged PR
       if [ "$ID" = "master" ]
@@ -72,11 +69,10 @@ jobs:
           if [ "$SHOULD_TAG" = true ]
           then
               echo "Triggering new version tag"
-
               git tag -a "$MAJOR"."$MINOR"."$PATCH" -m "Azure Devops Pipelines Versioning Strategy: Tagging new version"
               echo "Previous version $VERSION"
               echo "New version : $MAJOR.$MINOR.$PATCH"
-              git push https://$GIT_USERNAME:$PAT@$REPO_URI $ID --tags
+              git push https://$GIT_USERNAME:$PAT@github.com/$REPO $ID --tags
           else
               echo "No label triggering new version"
           fi
