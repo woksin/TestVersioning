@@ -11,7 +11,6 @@ jobs:
 
   steps:
   - bash: |
-      set -eo pipefail
       URL=$(Build.Repository.Uri)
       BRANCH=$(Build.SourceBranch) 
       COMMIT_SHA=$(Build.SourceVersion)
@@ -107,7 +106,6 @@ jobs:
     displayName: Installing dependencies
 
   - bash: |
-      set -eo pipefail
       echo "$(Version)"
       if [ "$(Version)" != "empty" ]
       then
