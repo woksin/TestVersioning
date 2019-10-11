@@ -138,16 +138,15 @@ jobs:
               git push https://$GIT_USERNAME:$PAT@github.com/$REPO $(Version)
           else
               echo "Releasing multiple packages"
-              PACKAGES=$(find Source/*/package.json)
-              echo "$PACKAGES" | while read -r package
+              for package in Source/*/package.json
               do
-                  JSON=$(jq -r -e --arg ver $(Version) '.version = $ver' "$package")
-                  echo "$JSON" > "$package"
-                  git add "$package"
-                  dir=dirname "$package"
-                  cd "$dir"
-                  npm publish
-                  cd ../..
+                  echo "$package"
+                  JSON=$(jq -r -e --arg ver $(Version) '.version = $ver' ./"$package")
+                  echo "$JSON" > ./"$package"
+                  dir=$(dirname "$package")
+                  git add ./"$package"
+                  npm publish ./"$dir"
+                  
               done
               git commit -m "Increment versions"
               git push https://$GIT_USERNAME:$PAT@github.com/$REPO HEAD:$BRANCH
