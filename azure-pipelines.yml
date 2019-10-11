@@ -31,7 +31,7 @@ jobs:
           do
               sleep 1
           done
-          VERSION=$(echo $TAG_REFS | grep -o -E "refs/tags/\S+" | grep -o -e "[0-9]\+\.[0-9]\+\.[0-9]\+" | head -1) # About 2 hours spent here, grep on my machine and this did not behave the same given the same input...
+          VERSION=$(echo $TAG_REFS | grep -o -E "refs/tags/\S+" | grep -o -e "[0-9]\+\.[0-9]\+\.[0-9]\+" | head -1)
           NEW_PROJECT=false
           if [ ! "$VERSION" ]
           then
@@ -69,6 +69,7 @@ jobs:
           if [ "$SHOULD_TAG" = true ]
           then
               NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+              # Set a variable to be used at the same job level. To share between jobs add isoutput(or something)=true
               echo "##vso[task.setvariable variable=Version]$NEW_VERSION"
               echo "Triggering new version tag"
               git config user.name \"$GIT_USERNAME\"
@@ -114,14 +115,23 @@ jobs:
 
           echo Triggering new release of version "$(Version)"
           
-          
+          echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
+          echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > ~/.npmrc
+
           WORKSPACES=$(jq '.workspaces' package.json)
           if [ "$WORKSPACES" = null ]
           then
-              echo "Releasing single package"
+              echo Releasing single package
               JSON=$(jq -r -e --arg ver $(Version) '.version = $ver' package.json)
               echo "$JSON" > package.json
               git add package.json
+              npm publish
+              git commit -m "Increment version"
+              git push https://$GIT_USERNAME:$PAT@github.com/$REPO HEAD:$BRANCH
+
+              git tag -d $(Version) && git tag $(Version)
+              git push https://$GIT_USERNAME:$PAT@github.com/$REPO :$(Version)
+              git push https://$GIT_USERNAME:$PAT@github.com/$REPO $(Version)
           else
               echo "Releasing multiple packages"
               PACKAGES=$(find Source/*/package.json)
@@ -130,18 +140,18 @@ jobs:
                   JSON=$(jq -r -e --arg ver $(Version) '.version = $ver' "$package")
                   echo "$JSON" > "$package"
                   git add "$package"
+                  dir=dirname "$package"
+                  cd "$dir"
+                  npm publish
+                  cd ../..
               done
+              git commit -m "Increment versions"
+              git push https://$GIT_USERNAME:$PAT@github.com/$REPO HEAD:$BRANCH
+
+              git tag -d $(Version) && git tag $(Version)
+              git push https://$GIT_USERNAME:$PAT@github.com/$REPO :$(Version)
+              git push https://$GIT_USERNAME:$PAT@github.com/$REPO $(Version)
           fi
-
-          git commit -m "Increment version"
-          git push https://$GIT_USERNAME:$PAT@github.com/$REPO HEAD:$BRANCH
-          
-
-          echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
-          echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > ~/.npmrc
-          yarn config set _authToken $NPM_TOKEN
-          yarn pipeline:publish --registry https://registry.npmjs.com
-        
       else
           echo "No new version to release"
       fi
