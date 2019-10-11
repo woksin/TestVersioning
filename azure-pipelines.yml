@@ -26,7 +26,7 @@ jobs:
           echo "Got labels:"
           echo "$LABELS"
           echo "Getting version tag"
-          TAG_REFS=$(git -c 'versionsort.suffix=-' ls-remote -t --refs --sort=-v:refname)
+          TAG_REFS=$(git -c 'versionsort.suffix=-' ls-remote --refs --sort=-v:refname)
           while [ ! "$TAG_REFS" ]
           do
               sleep 1
