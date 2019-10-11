@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+        "lib": ["es2017"],
+        "module": "commonjs",
+        "target": "es2017",
+        "esModuleInterop": true,
+        "stripInternal": true,
+        "downlevelIteration": true,
+
+        "declaration": true,
+    
+        "strict": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+    
+        "moduleResolution": "node",
+        "inlineSourceMap": true,
+        "inlineSources": true,
+
+        "experimentalDecorators": true,
+        "rootDir": "Source",
+        "outDir": "lib",
+        "baseUrl": "./",
+        "sourceRoot": "./Source"
+    },
+    "exclude": ["Source/**/*.d.ts", "Source/**/*.js", "node_modules"],
+    "include": ["Source/**/*.ts"] 
+  }
+  
