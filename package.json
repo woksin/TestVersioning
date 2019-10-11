@@ -1,6 +1,6 @@
 {
   "name": "woksin.test-versioning",
-  "version": "2.8.0",
+  "version": "2.8.1",
   "description": "",
   "publishConfig": {
     "access": "public"
@@ -13,11 +13,9 @@
     "ts:cjs": "node  ./node_modules/typescript/bin/tsc -p tsconfig.json --declaration false",
     "ts:typedefs": "node  ./node_modules/typescript/bin/tsc --outDir ./Source --emitDeclarationOnly",
     "ts:all": "yarn ts:cjs && yarn ts:typedefs",
-    
     "test:clean": "rimraf 'lib/**/for_*'",
     "test:build": "yarn ts:cjs",
     "test:run": "mocha --require '@dolittle/typescript.build/mocha.opts' --reporter=spec 'lib/**/for_*/**/*.+(js|ts)'",
-    
     "clean": "rimraf lib && yarn ts:clean",
     "build": "yarn clean && yarn ts:all",
     "test": "yarn test:build && yarn test:run",
@@ -25,10 +23,10 @@
   },
   "devDependencies": {
     "@dolittle/typescript.build": "latest"
-},
+  },
   "files": [
-      "lib",
-      "package.json",
-      "Source/**/*.d.ts"
+    "lib",
+    "package.json",
+    "Source/**/*.d.ts"
   ]
 }
